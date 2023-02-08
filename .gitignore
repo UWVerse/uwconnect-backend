@@ -1,3 +1,8 @@
+######################
+# Preventing secret leak
+######################
+*.ini
+
 # OS generated files #
 ######################
 .DS_Store
