@@ -5,7 +5,7 @@ requests~=2.24 # HTTP library
 pymongo~=4.3.3 # MongoDB
 autopep8~=1.5 # automatically formats Python code to conform to the PEP 8 style guide
 faker~=16.6 # Generating dummy data
-validate-email~=1.3 # check if an email is valid, properly formatted and really exists.
+email-validator~=1.3 # check if an email is valid, properly formatted and really exists.
 itsdangerous~=2.1 #Safely pass trusted data to untrusted environments and back
 Pillow~=8.0 #Python Imaging Library
 timeago~=1.0 # format datetime with `*** time ago` statement
@@ -22,6 +22,7 @@ guess-language~=0.2 #detect the language of a given string
 pytz~=2020.1 #timezone calculations
 speaklater~=1.3 #lazy strings
 sqlparse~=0.4 #SQL parser
+uuid~=1.3
 
 # Flask extensions
 flask-cors~=3.0 #for handling Cross-Origin Resource Sharing
