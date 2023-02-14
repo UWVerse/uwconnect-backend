@@ -1,4 +1,4 @@
-from uwconnect_core import create_app
+from uwconnect_core.main import create_app
 from flask_cors import CORS
 
 if __name__ == "__main__":
@@ -6,7 +6,7 @@ if __name__ == "__main__":
     CORS(app)
     @app.route("/")
     def foo():
-        return "Check /dummy/ and /dummy/ping_db for examples"
+        return "Hello World"
 
 
     app.run()
