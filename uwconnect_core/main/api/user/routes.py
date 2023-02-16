@@ -7,7 +7,20 @@ from uwconnect_core.main.model.user import User
 user = Blueprint('user', __name__)
 
 @user.route("/register", methods=['POST'])
-def ping_db():
+def register():
+    """
+    Incoming request message:
+    username/password as parameter - all will be encoded before send
+    
+    * need to check if the username already exist in database.
+    * if the username is new then process to save the username and password to database. 
+    * the account should have status as unverified.
+
+    Return message:
+    return HTTP: 200 “success” if account created successfully
+    return HTTP: 200 “exist“ if account is exist
+    return server error if there is other error occurred
+    """
     user = User(**request.get_json())
     if User.objects(email=user.email).count() != 0:
         raise BadRequest("user existed")
@@ -21,8 +34,8 @@ def ping_db():
     return { "message": "success" }
 
 
-@user.route("/login", methods=['POST'])
-def login():
+@user.route("/validate", methods=['POST'])
+def validate():
     """
     Incoming request message:
     username/password as parameter - all will be encoded before send
