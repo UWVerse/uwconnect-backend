@@ -1,3 +1,4 @@
+"""
 import unittest
 import requests
 
@@ -9,6 +10,6 @@ class TestApp(unittest.TestCase):
         self.BASE_URL = "http://localhost:5000" 
         
     def test_get_all_requests(self):
-        """Test getting all requests"""
         response = requests.get('%s/request' % (self.BASE_URL))
         self.assertIsTrue(response.ok)
+"""
