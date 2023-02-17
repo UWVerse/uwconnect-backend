@@ -4,25 +4,36 @@ from flask import Flask, jsonify
 from pymongo import MongoClient
 from datetime import datetime
 from mongoengine import *
+
 import configparser
 import os
 
-config = configparser.ConfigParser()
-config.read(os.path.abspath("config.ini"))
-
 app = Flask(__name__)
-mode = config['GLOBAL']['MODE']
-connect(host=config[mode]['DB_URI'])
 
+# https://github.com/pallets/flask/issues/4786
+#======================================================
+from uwconnect_core.main.api.dummy.routes import dummy
+from uwconnect_core.main.api.user.routes import user
+from uwconnect_core.main.handler import handle_bad_request
+app.register_blueprint(dummy, url_prefix='/dummy')
+app.register_blueprint(user, url_prefix='/user')
+#======================================================
 
-def create_app():
+def create_app(testing=False):
+    config = configparser.ConfigParser()
+    config_path = get_config_path('config.ini')
+    config.read(config_path)    
+    mode = config['GLOBAL']['MODE']
+    if testing and mode != 'TEST':
+        raise ValueError(mode, 'mode of the database is not allowed for running unit test.')
 
-    from uwconnect_core.main.api.dummy.routes import dummy
-    from uwconnect_core.main.api.user.routes import user
-
-    app.register_blueprint(dummy, url_prefix='/dummy')
-    app.register_blueprint(user, url_prefix='/user')
-
-    from uwconnect_core.main.handler import handle_bad_request
+    connect(host=config[mode]['DB_URI'])
 
     return app
+
+def get_config_path(filename):
+    for root, dirs, files in os.walk(r'.'):
+        for name in files:
+            if name == filename:
+                return os.path.abspath(os.path.join(root, name))
+    raise FileNotFoundError("config.ini not found. You have to create one and fill in the secret key. Take config.ini.example as a reference.")

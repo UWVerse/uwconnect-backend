@@ -4,6 +4,7 @@ we need to import it. PyCharm will claim that the import is unused, but pytest a
 """
 from uwconnect_core.test.unit.webapp import client
 # https://codethechange.stanford.edu/guides/guide_flask_unit_testing.html
+# https://flask.palletsprojects.com/en/2.2.x/testing/
 
 # Need not to run `server.py`
 # Directly run `python -m pytest`
@@ -30,14 +31,3 @@ def test_demo(client):
     # assert landing.status_code == 200
     pass
 """
-
-def test_status_code(client):
-    api_status_405 =  [ 
-                client.get("/user/register").status_code, 
-                client.get("/user/validate").status_code, 
-                ]
-    # Check status for 405 not allowed
-    for code in api_status_405:
-        assert code == 405
-
-

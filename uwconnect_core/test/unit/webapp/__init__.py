@@ -16,7 +16,7 @@ def client():
 
     :return: App for testing
     """
-    app = create_app()
+    app = create_app(testing=True)
     #app.config['TESTING'] = True
     client = app.test_client()
 
