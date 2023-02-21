@@ -23,6 +23,12 @@ pytz~=2020.1 #timezone calculations
 speaklater~=1.3 #lazy strings
 sqlparse~=0.4 #SQL parser
 mongoengine~=0.26.0
+mongomock~=4.1.2 # Mongo mock DB
+
+# Testing
+pytest~=7.2.1 #Test
+factory_boy~=3.2.1 #Testing
+
 
 # Flask extensions
 flask-cors~=3.0 #for handling Cross-Origin Resource Sharing
