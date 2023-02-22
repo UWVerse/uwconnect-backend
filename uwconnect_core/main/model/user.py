@@ -9,9 +9,14 @@ def validate_email_whitelist(domain_whitelist):
             raise ValidationError
     return func
 
-class User(Document):
+class UserCredential(Document):
     email = EmailField(required="true", validation=validate_email_whitelist(domain_whitelist=["uwaterloo.ca"]))
     password = StringField(required=True)
+    def validate_profile(self):
+        User.email.validation(self.email)
+
+class User(Document):
+    email = EmailField(required="true", validation=validate_email_whitelist(domain_whitelist=["uwaterloo.ca"]))
 
     username = StringField(regex="[A-Za-z0-9_ ]+", min_length=6, max_length=32)
     gender = StringField(max_length=16)
