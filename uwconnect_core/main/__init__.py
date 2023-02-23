@@ -1,14 +1,20 @@
 import flask
-from flask import Flask, jsonify
+from flask import Flask, jsonify, redirect, url_for
 #from flask_cors import cross_origin
 from pymongo import MongoClient
 from datetime import datetime
 from mongoengine import *
+from apifairy import APIFairy
+from flask_marshmallow import Marshmallow
+import configparser
+import os
 
 import configparser
 import os
 
 app = Flask(__name__)
+flaskMarshal = Marshmallow()
+apifairy = APIFairy()
 
 """
 blueprint should be declared globally
@@ -35,7 +41,16 @@ def create_app(testing=False):
         raise ValueError(mode, 'mode of the database is not allowed for running unit test.')
 
     connect(host=config[mode]['DB_URI'])
-
+    app.config['APIFAIRY_TITLE'] = 'UW Connect API'
+    app.config['APIFAIRY_VERSION'] = '1.0'
+    app.config['APIFAIRY_UI'] = 'swagger_ui'
+    flaskMarshal.init_app(app)
+    apifairy.init_app(app)
+    
+    @app.route('/')
+    def index():  # pragma: no cover
+        return redirect(url_for('apifairy.docs'))
+    
     return app
 
 def get_config_path(filename):
