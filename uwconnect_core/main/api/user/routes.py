@@ -105,8 +105,6 @@ def getProfile(request):
         raise NotFound("user does not exist")
     
     userDetail = user().first()
-    del userDetail.password
-    del userDetail.id
 
     return userDetail
     
