@@ -1,6 +1,5 @@
-import json
 from flask import Blueprint, request, jsonify
-from apifairy import response,body, other_responses, arguments
+from apifairy import response, body, other_responses, arguments
 from mongoengine import ValidationError
 from werkzeug.exceptions import BadRequest, NotFound
 
@@ -105,6 +104,7 @@ def getProfile(request):
         raise NotFound("user does not exist")
     
     userDetail = user().first()
+    del userDetail.id
 
     return userDetail
     
