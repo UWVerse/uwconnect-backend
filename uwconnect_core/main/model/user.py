@@ -23,7 +23,7 @@ class User(Document):
     faculty = StringField()
     program = StringField()
     year = IntField()
-    courses = ListField(StringField(regex="[A-Z]+[0-9]+[A-Z]*"))
+    courses = ListField(StringField())
     tags = ListField(StringField())
     bio = StringField(max_length=1024)
 

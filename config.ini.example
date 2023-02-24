@@ -1,8 +1,10 @@
 [GLOBAL]
 MODE = TEST
+LOAD_ENROLLMENT_DB = False
 
 [PROD]
 DB_URI = your_production_db_uri (can be the same as Atlas, or a local MongoDB database)
+UW_API_KEY = 061987636A2741739A7BF77C2A344956
 
 [TEST]
 DB_URI = your_testing_db_uri
