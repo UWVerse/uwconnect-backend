@@ -1,7 +1,7 @@
 from uwconnect_core.main.model.enrollment import *
+from uwconnect_core.main.service.utils import get_file_path
 import requests
 import json
-
 
 def get_courses(api_key):
     headers = { "x-api-key": api_key }
@@ -18,13 +18,13 @@ def get_courses(api_key):
     return courses
         
 
-def load(api_key):
+def load_enrollment(api_key):
     faculties = None
     programs = None
-    with open("uwconnect_core/main/resource/faculty") as f:
+    with open(get_file_path("program.txt")) as f:
         faculties = f.read().strip().split('\n')
 
-    with open("uwconnect_core/main/resource/program") as f:
+    with open(get_file_path("faculty.txt")) as f:
         programs = f.read().strip().split('\n')
 
     courses = get_courses(api_key)
