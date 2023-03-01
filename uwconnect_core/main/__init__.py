@@ -49,8 +49,8 @@ def create_app(testing=False):
     if load_enrollment_db:
         # Insert a list of courses, programs, faculty into database
         load_enrollment(config[mode]['UW_API_KEY'])
-    # Insert a list of pre-define tag into database
-    load_hobbies()
+        # Insert a list of pre-define tag into database
+        load_hobbies()
 
     app.config['APIFAIRY_TITLE'] = 'UW Connect API'
     app.config['APIFAIRY_VERSION'] = '1.0'
