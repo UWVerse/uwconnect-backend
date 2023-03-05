@@ -4,7 +4,12 @@ LOAD_ENROLLMENT_DB = False
 
 [PROD]
 DB_URI = your_production_db_uri (can be the same as Atlas, or a local MongoDB database)
-UW_API_KEY = 061987636A2741739A7BF77C2A344956
+UW_API_KEY = xxx
+FRONTEND_DOMAIN = xxx
+SECRET_KEY = xxx
 
 [TEST]
 DB_URI = your_testing_db_uri
+UW_API_KEY = 061987636A2741739A7BF77C2A344956
+FRONTEND_DOMAIN = http://localhost:3000
+SECRET_KEY = AnythingYouLike

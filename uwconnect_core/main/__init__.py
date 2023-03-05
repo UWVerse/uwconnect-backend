@@ -1,13 +1,13 @@
 import flask
-from flask import Flask, jsonify, redirect, url_for
+from flask import Flask, jsonify, redirect, session, url_for
 #from flask_cors import cross_origin
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timedelta
 from mongoengine import *
 from apifairy import APIFairy
 from flask_marshmallow import Marshmallow
 import configparser
-import os
+from flask_session import Session
 from uwconnect_core.main.service.utils import get_file_path
 from uwconnect_core.main.service.load_enrollment_db import load_enrollment
 from uwconnect_core.main.service.load_hobbies_db import load_hobbies
@@ -15,6 +15,8 @@ from uwconnect_core.main.service.load_hobbies_db import load_hobbies
 app = Flask(__name__)
 flaskMarshal = Marshmallow()
 apifairy = APIFairy()
+sess = Session()
+
 
 """
 blueprint should be declared globally
@@ -52,11 +54,26 @@ def create_app(testing=False):
         # Insert a list of pre-define tag into database
         load_hobbies()
 
+    
     app.config['APIFAIRY_TITLE'] = 'UW Connect API'
     app.config['APIFAIRY_VERSION'] = '1.0'
     app.config['APIFAIRY_UI'] = 'swagger_ui'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config["SESSION_USE_SIGNER"] = True
+    app.config['SECRET_KEY'] = config[mode]['SECRET_KEY']
+    app.config['SESSION_COOKIE_SECURE'] = True if config[mode]['SESSION_COOKIE_SECURE'] == 'True' else False
+    print(app.config['SESSION_COOKIE_SECURE'])
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['FRONTEND_DOMAIN'] = config[mode]['FRONTEND_DOMAIN']
+
     flaskMarshal.init_app(app)
     apifairy.init_app(app)
+    sess.init_app(app)
+
+    @app.before_request
+    def make_session_permanent():
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(minutes=1)
     
     @app.route('/')
     def index():  # pragma: no cover
