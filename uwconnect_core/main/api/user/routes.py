@@ -91,6 +91,7 @@ def validate(request):
 @user.route("/profile", methods=['GET'])
 @arguments(user_request_schema)
 @response(user_schema)
+@check_login
 def getProfile(request):
     """
     GET user profile

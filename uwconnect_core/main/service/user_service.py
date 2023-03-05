@@ -15,11 +15,12 @@ def pop_session(key):
 
 
 def check_login(func):
-    def wrapper():
+    def wrapper(*args, **kwargs):
         try:
             get_session("email")
         except:
             # return redirect(app.config['FRONTEND_DOMAIN'] + '/')
             raise Forbidden("client not logged in")
-        return func()
+        return func(*args, **kwargs)
+    wrapper.__name__ = func.__name__
     return wrapper
