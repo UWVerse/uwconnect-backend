@@ -62,9 +62,9 @@ def create_app(testing=False):
     app.config["SESSION_USE_SIGNER"] = True
     app.config['SECRET_KEY'] = config[mode]['SECRET_KEY']
     app.config['SESSION_COOKIE_SECURE'] = True if config[mode]['SESSION_COOKIE_SECURE'] == 'True' else False
-    print(app.config['SESSION_COOKIE_SECURE'])
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SAMESITE'] = 'none'
     app.config['FRONTEND_DOMAIN'] = config[mode]['FRONTEND_DOMAIN']
+    # app.config['SESSION_COOKIE_DOMAIN'] = 'dev.localhost'
 
     flaskMarshal.init_app(app)
     apifairy.init_app(app)

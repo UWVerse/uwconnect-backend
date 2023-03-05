@@ -167,7 +167,7 @@ def updateProfile(request):
 @user.route("/who", methods=["GET"])
 def get_logged_in_user():
     """redirect to frontend homepage if the client is not logged in"""
-    # print(session)
+    print(session)
     try:
         return {
             "email": get_session("email")
