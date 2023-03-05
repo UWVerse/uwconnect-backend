@@ -12,4 +12,4 @@ SECRET_KEY = xxx
 DB_URI = your_testing_db_uri
 UW_API_KEY = 061987636A2741739A7BF77C2A344956
 FRONTEND_DOMAIN = http://localhost:3000
-SECRET_KEY = AnythingYouLike
+SECRET_KEY = something
