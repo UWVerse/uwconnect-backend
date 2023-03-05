@@ -73,7 +73,7 @@ def create_app(testing=False):
     @app.before_request
     def make_session_permanent():
         session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=1)
+        app.permanent_session_lifetime = timedelta(days=30)
     
     @app.route('/')
     def index():  # pragma: no cover
