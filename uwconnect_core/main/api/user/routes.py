@@ -1,12 +1,14 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, make_response, redirect, request, jsonify, session
 from apifairy import response, body, other_responses, arguments
 from mongoengine import ValidationError
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest, NotFound, Forbidden
 
 from uwconnect_core.main.model.user import User, UserCredential
+from uwconnect_core.main.service.user_service import check_login, get_session, set_session
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
-from uwconnect_core.main.api.schemas.user_schema import UserSchema, UserAuthorizeSchema, UserDetailRequestSchema, UserCredentailSchema
+from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserDetailRequestSchema, UserCredentailSchema
+from uwconnect_core.main import app
 
 user = Blueprint('user', __name__)
 message_schema = MessageSchema()
@@ -14,6 +16,7 @@ user_cre_schema = UserCredentailSchema()
 user_schema = UserSchema()
 user_authorize_schema = UserAuthorizeSchema()
 user_request_schema = UserDetailRequestSchema()
+session_schema = SessionSchema()
 
 @user.route("/register", methods=['POST'])
 @body(user_cre_schema)
@@ -79,13 +82,19 @@ def validate(request):
         user_query = UserCredential.objects.filter(email=user_email,password=user_password).first()
     
     if(user_query):
-        return { "message": "exist" } if flag_checkUserOnly else { "message": "success" }
+        if flag_checkUserOnly:
+            return { "message": "exist" } 
+        else:
+            set_session("email", user_email)
+            return { "message": "success" }
     else:
         return { "message": "fail" }
+
 
 @user.route("/profile", methods=['GET'])
 @arguments(user_request_schema)
 @response(user_schema)
+@check_login
 def getProfile(request):
     """
     GET user profile
@@ -108,6 +117,7 @@ def getProfile(request):
 
     return userDetail
     
+
 @user.route("/profile", methods=['POST'])
 @body(user_schema)
 @response(message_schema)
@@ -142,7 +152,36 @@ def updateProfile(request):
     except ValidationError:
         raise BadRequest("invalid arguments")
     
-    if User.objects(email=user_email).modify(upsert=True, new=True, **document_to_dict(request)):
-        return { "message": "success" }
-    raise NotFound("user does not exist")
-    
+    user_profile_query = User.objects(email=user_email)
+
+    # resp.set_cookie("email", request.email)
+    # resp.set_cookie("username", request.username)
+    set_session("email", request.email)
+    set_session("username", request.username)
+    # print(session)
+
+    user_profile_query.modify(upsert=True, new=True, **document_to_dict(request))
+    return { "message": "success" }
+
+
+@user.route("/who", methods=["GET"])
+def get_logged_in_user():
+    """redirect to frontend homepage if the client is not logged in"""
+    print(session)
+    try:
+        return {
+            "email": get_session("email")
+        }
+    except:
+        # return redirect(app.config['FRONTEND_DOMAIN'] + '/')
+        raise Forbidden("client not logged in")
+
+
+@user.route("/test_middlewire", methods=["GET"])
+@check_login
+def test_middlewire():
+    """
+    a simple route that demonstrate how 'check_login' middlewire works, add it to protect all APIs that needs to be protected.
+    All endpoints protected by 'check_login' will return 403 if no user is logged in for that client
+    """
+    return {"message": "success"}
