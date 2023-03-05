@@ -82,8 +82,11 @@ def validate(request):
         user_query = UserCredential.objects.filter(email=user_email,password=user_password).first()
     
     if(user_query):
-        set_session("email", user_email)
-        return { "message": "exist" } if flag_checkUserOnly else { "message": "success" }
+        if flag_checkUserOnly:
+            return { "message": "exist" } 
+        else:
+            set_session("email", user_email)
+            return { "message": "success" }
     else:
         return { "message": "fail" }
 
