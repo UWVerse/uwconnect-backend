@@ -64,6 +64,8 @@ def create_app(testing=False):
     app.config['SESSION_COOKIE_SECURE'] = True if config[mode]['SESSION_COOKIE_SECURE'] == 'True' else False
     app.config['SESSION_COOKIE_SAMESITE'] = 'none'
     app.config['FRONTEND_DOMAIN'] = config[mode]['FRONTEND_DOMAIN']
+    app.config['COMETCHAT_API_KEY'] = config[mode]['COMETCHAT_API_KEY']
+    app.config['COMETCHAT_APP_ID'] = config[mode]['COMETCHAT_APP_ID']
     # app.config['SESSION_COOKIE_DOMAIN'] = 'dev.localhost'
 
     flaskMarshal.init_app(app)

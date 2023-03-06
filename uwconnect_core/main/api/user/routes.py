@@ -4,7 +4,7 @@ from mongoengine import ValidationError
 from werkzeug.exceptions import BadRequest, NotFound, Forbidden
 
 from uwconnect_core.main.model.user import User, UserCredential
-from uwconnect_core.main.service.user_service import check_login, get_session, set_session
+from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, set_session
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
 from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserDetailRequestSchema, UserCredentailSchema
@@ -159,6 +159,10 @@ def updateProfile(request):
     set_session("email", request.email)
     set_session("username", request.username)
     # print(session)
+    if user_profile_query.count() == 0:
+        # new user
+        uid = request.email.split('@')[0]
+        cometchat_create_user(uid, request.username)
 
     user_profile_query.modify(upsert=True, new=True, **document_to_dict(request))
     return { "message": "success" }
