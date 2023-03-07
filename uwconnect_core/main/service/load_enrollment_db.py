@@ -22,10 +22,10 @@ def load_enrollment(api_key):
     faculties = None
     programs = None
     with open(get_file_path("program.txt")) as f:
-        faculties = f.read().strip().split('\n')
+        programs = f.read().strip().split('\n')
 
     with open(get_file_path("faculty.txt")) as f:
-        programs = f.read().strip().split('\n')
+        faculties = f.read().strip().split('\n')
 
     courses = get_courses(api_key)
 
