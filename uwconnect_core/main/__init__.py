@@ -54,6 +54,12 @@ def create_app(testing=False):
         # Insert a list of pre-define tag into database
         load_hobbies()
 
+    if mode == 'TEST':
+        from uwconnect_core.main.service.load_dummy_db import load_dummy_users, delete_all_user
+        delete_all_user()
+        load_dummy_users(500)
+
+
     
     app.config['APIFAIRY_TITLE'] = 'UW Connect API'
     app.config['APIFAIRY_VERSION'] = '1.0'
