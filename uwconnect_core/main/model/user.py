@@ -42,7 +42,7 @@ class User(Document):
 
     def validate_profile(self):
         User.email.validation(self.email)
-        #User.username.validate(self.username)
+        User.username.validate(self.username)
         User.first_name.validate(self.first_name)
         User.last_name.validate(self.last_name)
         User.gender.validate(self.gender)
