@@ -1,0 +1,15 @@
+# Weighting of matching algorithm
+# gender: Matching opposite gender :>
+# faculty: Matching faculty
+# program: Matching program
+# year: Matching year
+# courses: Matching courses
+# tags: Matching hobbies (each)
+weight_params:
+  gender: 0
+  faculty: 5
+  program: 10
+  year: 10
+  courses: 5
+  tags: 10
+
