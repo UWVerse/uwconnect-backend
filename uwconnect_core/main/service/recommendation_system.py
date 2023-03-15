@@ -4,6 +4,28 @@ from mongoengine import *
 from typing import Union, List
 from utils import get_omega_config
 
+def search_recommendation_db(user: User):
+    """
+    Search through the database with similar profile.
+    We only search in the database that:
+        any of the hobbies match
+        any of the courses match
+        program match
+    """
+    hobbies_to_match = user.tags
+    courses_to_match = user.courses
+    program = user.program
+    email = user.email
+    # Query the database for all records
+    # Search only visible profiles, and must not be User himself/herself
+    query = Q(profile_visible=True, email__ne=email)
+
+    query &= Q(hobby__in=hobbies_to_match) | Q(course__in=courses_to_match) | Q(program=program)
+    # ^ The __in operator is used in MongoDB queries to match any document that has a field whose value is contained in a given list of values.
+
+    records = User.objects(query)
+    return records
+
 def get_recommendation(user: User, other_users: List[User], list_length: int, score_threshold: int):
     """
     Develop Recommendation algorithm. 
@@ -11,8 +33,8 @@ def get_recommendation(user: User, other_users: List[User], list_length: int, sc
     param:
         user: current logged user
         other_users: other users in the db
-        list_length: 
-        score_threshold: 
+        list_length: how many recommendations to be returned
+        score_threshold: passing the threshold
     return:
     The recommendation user list should contains user name, user profile, user email.
     """
@@ -53,7 +75,7 @@ def get_score(item1: Union[int, float, str, list], item2: Union[int, float, str,
     Compute score for a specific item.
     For list, we find the common items in two list and return the score according to number of commons.
     return:
-
+        score for that part
     """
     if isinstance(item1, str) and isinstance(item2, str):
         #"string"
