@@ -1,7 +1,7 @@
 from flask import session
 from werkzeug.exceptions import Forbidden
 import requests
-from uwconnect_core.main import app
+from flask import current_app
 
 
 def set_session(key, val):
@@ -28,7 +28,7 @@ def check_login(func):
     return wrapper
 
 def cometchat_create_user(uid, username):
-    url = f"https://{app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users"
+    url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users"
 
     payload = {
                 "uid": uid,
@@ -37,7 +37,7 @@ def cometchat_create_user(uid, username):
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "apikey": app.config["COMETCHAT_API_KEY"]
+        "apikey": current_app.config["COMETCHAT_API_KEY"]
     }
 
     requests.post(url, json=payload, headers=headers)

@@ -6,6 +6,8 @@ from uwconnect_core.test.unit.webapp import client
 # https://codethechange.stanford.edu/guides/guide_flask_unit_testing.html
 # https://flask.palletsprojects.com/en/2.2.x/testing/
 
+from uwconnect_core.main.model.user import UserCredential
+
 # Need not to run `server.py`
 # Directly run `python -m pytest`
 
@@ -31,7 +33,6 @@ def test_user_register(client):
     return HTTP: 200 “exist“ if account is exist
     return server error if there is other error occurred
     """
-    from uwconnect_core.main.model.user import User
     user_info = {
                     "email": "xxx@uwaterloo.ca",
                     "password": "xxxx",
@@ -48,10 +49,10 @@ def test_user_register(client):
     }
 
     # Incase the data exists in the database
-    query = User.objects.filter(email=user_info['email'], password=user_info['password']).first()
+    query = UserCredential.objects.filter(email=user_info['email'], password=user_info['password']).first()
     if query:
         query.delete()
-    assert User.objects(email=user_info['email'], password=user_info['password']).count() == 0
+    assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0
 
     #account created successfully
     response = client.post('/user/register', json=user_info)
@@ -69,10 +70,10 @@ def test_user_register(client):
     assert "exist" in message
 
     # delete the added dummy data
-    query = User.objects.filter(email=user_info['email'], password=user_info['password']).first()
+    query = UserCredential.objects.filter(email=user_info['email'], password=user_info['password']).first()
     if query:
         query.delete()
-    assert User.objects(email=user_info['email'], password=user_info['password']).count() == 0
+    assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0
     
 def test_user_validate(client):
     """
@@ -82,7 +83,7 @@ def test_user_validate(client):
     return “fail“ if its invalid account
     """
 
-    from uwconnect_core.main.model.user import User
+    
     user_info = {
                     "email": "xxx@uwaterloo.ca",
                     "password": "xxxx",
@@ -125,7 +126,7 @@ def test_user_validate(client):
     assert "fail" in message
 
     # delete the added dummy data
-    query = User.objects.filter(email=user_info['email'], password=user_info['password']).first()
+    query = UserCredential.objects.filter(email=user_info['email'], password=user_info['password']).first()
     if query:
         query.delete()
-    assert User.objects(email=user_info['email'], password=user_info['password']).count() == 0
+    assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0

@@ -12,32 +12,29 @@ from uwconnect_core.main.service.utils import get_file_path
 from uwconnect_core.main.service.load_enrollment_db import load_enrollment
 from uwconnect_core.main.service.load_hobbies_db import load_hobbies
 
-app = Flask(__name__)
 flaskMarshal = Marshmallow()
 apifairy = APIFairy()
 sess = Session()
-
-
-"""
-blueprint should be declared globally
-see # https://github.com/pallets/flask/issues/4786
-"""
-from uwconnect_core.main.api.user.routes import user
-from uwconnect_core.main.api.enrollment.routes import enrollment
-from uwconnect_core.main.api.hobbies.routes import hobbies
-
-app.register_blueprint(user, url_prefix='/user')
-app.register_blueprint(enrollment, url_prefix="/enrollment")
-app.register_blueprint(hobbies, url_prefix="/hobbies")
-
-import uwconnect_core.main.handler  # Do NOT remove
-
 
 def create_app(testing=False):
     """
     testing=False: normal run
     testing=True: used by unit tests. config.ini has to be the same mode as parameter.
     """
+
+    app = Flask(__name__)
+    # https://flask.palletsprojects.com/en/2.2.x/api/#flask.current_app
+    with app.app_context():
+        from uwconnect_core.main.api.user.routes import user
+        from uwconnect_core.main.api.enrollment.routes import enrollment
+        from uwconnect_core.main.api.hobbies.routes import hobbies
+
+        app.register_blueprint(user, url_prefix='/user')
+        app.register_blueprint(enrollment, url_prefix="/enrollment")
+        app.register_blueprint(hobbies, url_prefix="/hobbies")
+
+        import uwconnect_core.main.handler  # Do NOT remove
+
     config = configparser.ConfigParser()
     config_path = get_file_path('config.ini')
     config.read(config_path)    
@@ -57,7 +54,7 @@ def create_app(testing=False):
     if mode == 'TEST':
         from uwconnect_core.main.service.load_dummy_db import load_dummy_users, delete_all_user
         delete_all_user()
-        load_dummy_users(500)
+        #load_dummy_users(500)
 
 
     

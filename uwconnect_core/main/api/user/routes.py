@@ -8,7 +8,6 @@ from uwconnect_core.main.service.user_service import check_login, cometchat_crea
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
 from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserDetailRequestSchema, UserCredentailSchema
-from uwconnect_core.main import app
 
 user = Blueprint('user', __name__)
 message_schema = MessageSchema()
