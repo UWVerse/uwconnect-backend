@@ -43,4 +43,5 @@ class RandomUserFactory(factory.mongoengine.MongoEngineFactory):
 
     @factory.post_generation
     def print_username(obj, create, extracted, **kwargs):
-        print(obj.email)
+        #print(obj.email)
+        pass
