@@ -1,6 +1,7 @@
 [GLOBAL]
 MODE = TEST
 LOAD_ENROLLMENT_DB = False
+LOAD_DUMMY_DB = False
 
 [PROD]
 DB_URI = your_production_db_uri (can be the same as Atlas, or a local MongoDB database)
