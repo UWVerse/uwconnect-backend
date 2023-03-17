@@ -1,4 +1,3 @@
-from random import Random
 from flask import Blueprint, make_response, redirect, request, jsonify, session
 from apifairy import response, body, other_responses, arguments
 from mongoengine import ValidationError
