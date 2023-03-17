@@ -40,6 +40,8 @@ def create_app(testing=False):
     config.read(config_path)    
     mode = config['GLOBAL']['MODE']
     load_enrollment_db = True if config['GLOBAL']['LOAD_ENROLLMENT_DB'] == "True" else False
+    load_dummy_db = True if config['GLOBAL']['LOAD_DUMMY_DB'] == "True" else False
+
     if testing and mode != 'TEST':
         raise ValueError(mode, 'mode of the database is not allowed for running unit test.')
 
@@ -51,7 +53,7 @@ def create_app(testing=False):
         # Insert a list of pre-define tag into database
         load_hobbies()
 
-    if mode == 'TEST':
+    if load_dummy_db:
         from uwconnect_core.main.service.load_dummy_db import load_dummy_users, delete_all_user
         delete_all_user()
         #load_dummy_users(500)

@@ -188,3 +188,4 @@ def test_middlewire():
     All endpoints protected by 'check_login' will return 403 if no user is logged in for that client
     """
     return {"message": "success"}
+
