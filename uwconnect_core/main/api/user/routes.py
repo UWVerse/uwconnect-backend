@@ -191,17 +191,3 @@ def test_middlewire():
     """
     return {"message": "success"}
 
-
-@user.route("/friend/request", methods=['POST'])
-def friend_request():
-    """
-    A toy comet chat web hook example, whcih let messages pass with 0.5 possibility
-    """
-    friends_with_each_other = Random().random() >= 0.5
-    print(friends_with_each_other)
-    if friends_with_each_other:
-        # permit the message
-        return {}
-    else:
-        # omit the message
-        return { "action": "do_not_propagate" }
