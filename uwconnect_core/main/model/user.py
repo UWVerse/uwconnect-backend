@@ -55,3 +55,8 @@ class User(Document):
         #User.bio.validate(self.bio)
         User.date_joined.validate(self.date_joined)
         User.profile_visible.validate(self.profile_visible)
+        
+    def get_uid(self):
+        return self.email.split('@')[0]
+
+    
