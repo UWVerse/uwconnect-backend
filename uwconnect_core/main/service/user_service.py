@@ -27,6 +27,7 @@ def check_login(func):
     wrapper.__name__ = func.__name__
     return wrapper
 
+
 def cometchat_create_user(uid, username):
     url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users"
 
