@@ -28,10 +28,10 @@ class UserAuthorizeSchema(flaskMarshal.Schema):
     checkUserOnly = flaskMarshal.Boolean()
 
 
-class UserDetailRequestSchema(flaskMarshal.Schema):
+class SessionSchema(flaskMarshal.Schema):
+    username = flaskMarshal.String()
     email = flaskMarshal.String()
 
 
-class SessionSchema(flaskMarshal.Schema):
-    username = flaskMarshal.String()
+class UserEmailSchema(flaskMarshal.Schema):
     email = flaskMarshal.String()

@@ -4,17 +4,17 @@ from mongoengine import ValidationError
 from werkzeug.exceptions import BadRequest, NotFound, Forbidden
 
 from uwconnect_core.main.model.user import User, UserCredential
-from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, set_session
+from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, pop_session, set_session
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
-from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserDetailRequestSchema, UserCredentailSchema
+from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserEmailSchema, UserCredentailSchema
 
 user = Blueprint('user', __name__)
 message_schema = MessageSchema()
 user_cre_schema = UserCredentailSchema()
 user_schema = UserSchema()
 user_authorize_schema = UserAuthorizeSchema()
-user_request_schema = UserDetailRequestSchema()
+user_email_schema = UserEmailSchema()
 session_schema = SessionSchema()
 
 @user.route("/register", methods=['POST'])
@@ -91,7 +91,7 @@ def validate(request):
 
 
 @user.route("/profile", methods=['GET'])
-@arguments(user_request_schema)
+@arguments(user_email_schema)
 @response(user_schema)
 @check_login
 def getProfile(request):
@@ -168,6 +168,7 @@ def updateProfile(request):
 
 
 @user.route("/who", methods=["GET"])
+@response(user_email_schema)
 def get_logged_in_user():
     """redirect to frontend homepage if the client is not logged in"""
     print(session)
@@ -178,6 +179,24 @@ def get_logged_in_user():
     except:
         # return redirect(app.config['FRONTEND_DOMAIN'] + '/')
         raise Forbidden("client not logged in")
+    
+
+@user.route("/logout", methods=["POST"])
+@body(user_email_schema)
+@response(message_schema)
+@check_login
+def log_out(request):
+    """remove the backend session for incoming client, email in request body must match the one in client's session"""
+    email = request["email"]
+    user = get_session("email")
+
+    print(email, user)
+
+    if email != user:
+        raise Forbidden("client not logged in")
+    
+    pop_session("email")
+    return { "message": "success" }
 
 
 @user.route("/test_middlewire", methods=["GET"])
