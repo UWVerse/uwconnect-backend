@@ -10,6 +10,7 @@ from uwconnect_core.main.model.user import UserCredential
 
 # Need not to run `server.py`
 # Directly run `python -m pytest`
+# Directly run `python -m pytest -v -s --disable-warnings`
 
 def test_status_code(client):
     """

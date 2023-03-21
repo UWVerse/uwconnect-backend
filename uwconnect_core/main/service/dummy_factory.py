@@ -8,6 +8,7 @@ from factory.fuzzy import FuzzyChoice, FuzzyInteger
 import random
 import string
 
+"""
 def get_list_hobbies():
     hobbies = Hobbies.objects().first()
     return list(hobbies['hobbies'])
@@ -17,6 +18,17 @@ def get_list_enrollment():
     faculty = list(enroll['faculty'])
     program = list(enroll['program'])
     courses = list(enroll['course'])
+    return faculty, program, courses
+"""
+
+def get_list_hobbies():
+    hobbies = ['Tennis', 'Singing', 'Dancing', 'Acting', 'Stand-up comedy', 'Cooking', 'Baking', 'Basketball', 'Soccer', 'Yoga', 'Meditation', 'Traveling']
+    return hobbies
+
+def get_list_enrollment():
+    faculty = ['Arts','Engineering','Environment','Health','Mathematics','Science']
+    program = ['Combinatorics and Optimization','Communication Studies','Computational Mathematics','Computer Engineering','Computer Science','Computing and Financial Management','Data Science']
+    courses = ['ECE650', 'ECE651', 'ECE653', 'ECE657', 'CS686', 'CS666', 'CS686', 'CO663', 'ECE656', 'ECE658']
     return faculty, program, courses
 
 list_hobbies = get_list_hobbies()

@@ -10,12 +10,31 @@ from uwconnect_core.main.service.load_dummy_db import *
 from uwconnect_core.main.service.dummy_factory import *
 from uwconnect_core.main.service.recommendation_system import *
 
+import logging
+
 # Need not to run `server.py`
 # Directly run `python -m pytest`
+# Directly run `python -m pytest -v -s --disable-warnings`
 
 def test_recommendation(client):
+    
+    delete_all_user()
+    load_dummy_users(50)
     user = RandomUserFactory(username="test",
                              tags=['Tennis'],
                              profile_visible=True)
     records = search_recommendation_db(user)
-    print(records)
+    print("len(records): ", len(records))
+    assert len(records) > 0
+
+    recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
+    print("len(recommendations): ", len(recommendations))
+    assert len(recommendations) > 0
+
+    """
+    print(user.courses)
+    print(user.tags)
+    print(recommendations[0].tags)
+    print(recommendations[0].courses)
+    """
+
