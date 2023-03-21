@@ -36,7 +36,7 @@ class User(Document):
     courses = ListField(StringField())
     tags = ListField(StringField())
     #bio = StringField(max_length=1024)
-    date_joined = DateTimeField(default=datetime.now)
+    date_joined = DateTimeField(default=datetime.now())
     profile_visible = BooleanField()
 
 

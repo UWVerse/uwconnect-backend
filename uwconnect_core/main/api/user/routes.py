@@ -123,23 +123,6 @@ def getProfile(request):
 def updateProfile(request):
     """
     POST: update user detail
-        Incoming request message:
-            body: {
-                email = EmailField(domain_whitelist=["@uwaterloo.ca"], required="true")
-                username = StringField(regex="[A-Za-z0-9_ ]+", min_length=6, max_length=32)
-                gender = StringField(max_length=16)
-                faculty = StringField()
-                program = StringField()
-                year = IntField()
-                courses = ListField(StringField(regex="[A-Z]+[0-9]+[A-Z]*"))
-                tags = ListField(StringField())
-                bio = StringField(max_length=1024)
-            }
-
-        Return Message:
-            if request body does not follow the above structure: "invalid arguments"
-            if email does not exist: { "message": "user does not exist" }
-            otherwise: { "message": "success" }
 
     """
     user_email = request.email
@@ -162,6 +145,9 @@ def updateProfile(request):
         # new user
         uid = request.email.split('@')[0]
         cometchat_create_user(uid, request.username)
+
+    print(document_to_dict(request)["date_joined"])
+    
 
     user_profile_query.modify(upsert=True, new=True, **document_to_dict(request))
     return { "message": "success" }
