@@ -1,10 +1,14 @@
 import json
 import os
 import omegaconf
+from bson.json_util import loads, dumps
 
 def document_to_dict(doc):
-    return json.loads(doc.to_json())
-
+    data = json.loads(doc.to_json())
+    # Convert $date value to datetime object
+    if "date_joined" in data:
+        data['date_joined'] = loads(dumps(data['date_joined']))
+    return data
 
 def document_to_dict_batch(queryset):
     return [document_to_dict(doc) for doc in queryset]
