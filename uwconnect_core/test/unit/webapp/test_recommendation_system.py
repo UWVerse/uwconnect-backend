@@ -23,6 +23,8 @@ def test_recommendation(client):
     load_dummy_users(50)
     user = RandomUserFactory(username="test",
                              tags=['Tennis'],
+                             courses=['ECE650', 'ECE651'],
+                             faculty = ['Engineering']
                              profile_visible=True)
     records = search_recommendation_db(user)
     print("len(records): ", len(records))
