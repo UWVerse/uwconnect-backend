@@ -9,6 +9,7 @@ from uwconnect_core.test.unit.webapp import client
 from uwconnect_core.main.service.load_dummy_db import *
 from uwconnect_core.main.service.dummy_factory import *
 from uwconnect_core.main.service.recommendation_system import *
+from uwconnect_core.main.service.utils import *
 
 import logging
 
@@ -31,6 +32,8 @@ def test_recommendation(client):
     print("len(recommendations): ", len(recommendations))
     assert len(recommendations) > 0
 
+    print(document_to_dict(user))
+    print(document_to_dict(recommendations[0]))
     """
     print(user.courses)
     print(user.tags)
