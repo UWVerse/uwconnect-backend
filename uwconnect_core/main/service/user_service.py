@@ -29,17 +29,16 @@ def check_login(func):
 
 
 def cometchat_create_user(uid, username):
-    # url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users"
+    url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users"
 
-    # payload = {
-    #             "uid": uid,
-    #             "name": username
-    #         }
-    # headers = {
-    #     "accept": "application/json",
-    #     "content-type": "application/json",
-    #     "apikey": current_app.config["COMETCHAT_API_KEY"]
-    # }
+    payload = {
+                "uid": uid,
+                "name": username
+            }
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "apikey": current_app.config["COMETCHAT_API_KEY"]
+    }
 
-    # requests.post(url, json=payload, headers=headers)
-    return 
+    requests.post(url, json=payload, headers=headers)
