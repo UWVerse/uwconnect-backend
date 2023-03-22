@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Forbidden
 
 from uwconnect_core.main.model.user import User, UserCredential
 from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, pop_session, set_session
+from uwconnect_core.main.service.recommendation_system import *
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
 from uwconnect_core.main.api.schemas.user_schema import SessionSchema, UserSchema, UserAuthorizeSchema, UserEmailSchema, UserCredentailSchema
@@ -194,3 +195,18 @@ def test_middlewire():
     """
     return {"message": "success"}
 
+@user.route("/get_recommendation", methods=["POST"])
+@body(user_schema)
+@check_login
+def recommendation(request):
+    """
+    Incoming request message:
+    user_schema #request is the user object
+
+    Return message:
+    return a list of recommendation users documents as JSON aka a list of user_schema
+    """
+    user = request
+    records = search_recommendation_db(user)
+    recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
+    return document_to_dict_batch(recommendations)
