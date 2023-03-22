@@ -8,6 +8,7 @@ from uwconnect_core.test.unit.webapp import client
 
 # Need not to run `server.py`
 # Directly run `python -m pytest`
+# Directly run `python -m pytest -v -s --disable-warnings`
 
 """
 def test_demo(client):

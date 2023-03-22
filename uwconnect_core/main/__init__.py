@@ -58,7 +58,7 @@ def create_app(testing=False):
     if load_dummy_db:
         from uwconnect_core.main.service.load_dummy_db import load_dummy_users, delete_all_user
         delete_all_user()
-        #load_dummy_users(500)
+        load_dummy_users(500)
 
 
     
