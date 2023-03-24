@@ -17,15 +17,27 @@ import logging
 # Directly run `python -m pytest`
 # Directly run `python -m pytest -v -s --disable-warnings`
 
-def test_recommendation(client):
+def test_randomuserfactory(client):
+    """
+    with factory.debug():
+        obj = RandomUserFactory()
+
     
+    logger = logging.getLogger('factory')
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.DEBUG)
+    """
+    pass
+
+def test_recommendation(client):
     delete_all_user()
+
+    user = load_test_user(tags=['Tennis'],
+                            courses=['ECE650', 'ECE651'],
+                            faculty = 'Engineering',
+                            profile_visible=True)
+    
     load_dummy_users(50)
-    user = RandomUserFactory(username="test",
-                             tags=['Tennis'],
-                             courses=['ECE650', 'ECE651'],
-                             faculty = 'Engineering',
-                             profile_visible=True)
     records = search_recommendation_db(user)
     print("len(records): ", len(records))
     assert len(records) > 0
@@ -36,10 +48,4 @@ def test_recommendation(client):
 
     print(document_to_dict(user))
     print(document_to_dict(recommendations[0]))
-    """
-    print(user.courses)
-    print(user.tags)
-    print(recommendations[0].tags)
-    print(recommendations[0].courses)
-    """
 
