@@ -1,4 +1,4 @@
-from uwconnect_core.main.model.user import User
+from uwconnect_core.main.model.user import User, UserCredential
 from uwconnect_core.main.model.enrollment import Enrollment
 from uwconnect_core.main.model.hobbies import Hobbies
 
@@ -34,6 +34,13 @@ def get_list_enrollment():
 list_hobbies = get_list_hobbies()
 list_faculty, list_program, list_courses = get_list_enrollment()
 
+class RandomUserCredentialFactory(factory.mongoengine.MongoEngineFactory):
+    class Meta:
+        model = UserCredential
+        
+    email = factory.Faker('email')
+    password = factory.Faker("password", length=10)
+
 class RandomUserFactory(factory.mongoengine.MongoEngineFactory):
     class Meta:
         model = User
@@ -54,6 +61,6 @@ class RandomUserFactory(factory.mongoengine.MongoEngineFactory):
     gender = factory.LazyFunction(lambda: random.choice(['male', 'female', 'other']))
 
     @factory.post_generation
-    def print_username(obj, create, extracted, **kwargs):
+    def print_user(obj, create, extracted, **kwargs):
         #print(obj.email)
         pass

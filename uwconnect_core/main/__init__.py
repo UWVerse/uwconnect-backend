@@ -58,9 +58,10 @@ def create_app(testing=False):
     if load_dummy_db:
         from uwconnect_core.main.service.load_dummy_db import load_dummy_users, delete_all_user
         delete_all_user()
-        load_dummy_users(500)
-
-
+        load_dummy_users(num_users=100, create_test_user=True, tags=['Tennis'],
+                            courses=['ECE650', 'ECE651'],
+                            faculty = 'Engineering',
+                            profile_visible=True)
     
     app.config['APIFAIRY_TITLE'] = 'UW Connect API'
     app.config['APIFAIRY_VERSION'] = '1.0'
