@@ -6,7 +6,7 @@ from uwconnect_core.main import flaskMarshal
 from flask import jsonify
 from uwconnect_core.main.service.utils import *
 
-class UserCredentailSchema(ma.ModelSchema):
+class UserCredentialSchema(ma.ModelSchema):
     class Meta:
         model = UserCredential
     
@@ -35,3 +35,15 @@ class SessionSchema(flaskMarshal.Schema):
 
 class UserEmailSchema(flaskMarshal.Schema):
     email = flaskMarshal.String()
+    
+class UserFilterSchema(ma.ModelSchema):
+    class Meta:
+        model = User
+        ordered = True
+        fields = ["gender","faculty","program","courses","tags"]
+
+class UserListSchema(flaskMarshal.Schema):
+    class Meta:
+        ordered = True
+    users = flaskMarshal.List(flaskMarshal.Nested(UserSchema))
+    total = flaskMarshal.Integer()

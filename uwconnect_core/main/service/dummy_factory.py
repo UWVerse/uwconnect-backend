@@ -1,4 +1,4 @@
-from uwconnect_core.main.model.user import User
+from uwconnect_core.main.model.user import User, UserCredential
 from uwconnect_core.main.model.enrollment import Enrollment
 from uwconnect_core.main.model.hobbies import Hobbies
 
@@ -8,6 +8,7 @@ from factory.fuzzy import FuzzyChoice, FuzzyInteger
 import random
 import string
 
+"""
 def get_list_hobbies():
     hobbies = Hobbies.objects().first()
     return list(hobbies['hobbies'])
@@ -18,9 +19,27 @@ def get_list_enrollment():
     program = list(enroll['program'])
     courses = list(enroll['course'])
     return faculty, program, courses
+"""
+
+def get_list_hobbies():
+    hobbies = ['Tennis', 'Singing', 'Dancing', 'Acting', 'Stand-up comedy', 'Cooking', 'Baking', 'Basketball', 'Soccer', 'Yoga', 'Meditation', 'Traveling']
+    return hobbies
+
+def get_list_enrollment():
+    faculty = ['Arts','Engineering','Environment','Health','Mathematics','Science']
+    program = ['Combinatorics and Optimization','Communication Studies','Computational Mathematics','Computer Engineering','Computer Science','Computing and Financial Management','Data Science']
+    courses = ['ECE650', 'ECE651', 'ECE653', 'ECE657', 'CS686', 'CS666', 'CS686', 'CO663', 'ECE656', 'ECE658']
+    return faculty, program, courses
 
 list_hobbies = get_list_hobbies()
 list_faculty, list_program, list_courses = get_list_enrollment()
+
+class RandomUserCredentialFactory(factory.mongoengine.MongoEngineFactory):
+    class Meta:
+        model = UserCredential
+        
+    email = factory.Faker('email')
+    password = factory.Faker("password", length=10)
 
 class RandomUserFactory(factory.mongoengine.MongoEngineFactory):
     class Meta:
@@ -42,6 +61,6 @@ class RandomUserFactory(factory.mongoengine.MongoEngineFactory):
     gender = factory.LazyFunction(lambda: random.choice(['male', 'female', 'other']))
 
     @factory.post_generation
-    def print_username(obj, create, extracted, **kwargs):
+    def print_user(obj, create, extracted, **kwargs):
         #print(obj.email)
         pass

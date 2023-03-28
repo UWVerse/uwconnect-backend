@@ -2,7 +2,7 @@
 from uwconnect_core.main.model.user import User
 from mongoengine import *
 from typing import Union, List
-from utils import get_omega_config
+from uwconnect_core.main.service.utils import get_omega_config
 
 def search_recommendation_db(user: User):
     """
@@ -20,7 +20,7 @@ def search_recommendation_db(user: User):
     # Search only visible profiles, and must not be User himself/herself
     query = Q(profile_visible=True, email__ne=email)
 
-    query &= Q(hobby__in=hobbies_to_match) | Q(course__in=courses_to_match) | Q(program=program)
+    query &= Q(tags__in=hobbies_to_match) | Q(courses__in=courses_to_match) | Q(program=program)
     # ^ The __in operator is used in MongoDB queries to match any document that has a field whose value is contained in a given list of values.
 
     records = User.objects(query)
@@ -43,15 +43,15 @@ def get_recommendation(user: User, other_users: List[User], list_length: int, sc
     # Naive algorithm, need a rework later
     list_user = []
     for other_user in other_users:
-        if (score_algorithm(user, other_user, config.weight_params) > score_threshold):
+        if (score_algorithm(user, other_user, config) > score_threshold):
             list_user.append(other_user)
 
-        if len(list_user) > list_length:
+        if len(list_user) >= list_length:
             break
 
     return list_user
 
-def score_algorithm(user1: User, user2: User, weight_params) -> int:
+def score_algorithm(user1: User, user2: User, config) -> int:
     """
     Score matching algorithm for Recommendation algorithm.
     param:
@@ -61,12 +61,12 @@ def score_algorithm(user1: User, user2: User, weight_params) -> int:
     A score between 2 users.
     """
     score = 0
-    score += get_score(user1.gender, user2.gender, weight_params.gender)
-    score += get_score(user1.faculty, user2.faculty, weight_params.faculty)
-    score += get_score(user1.program, user2.program, weight_params.program)
-    score += get_score(user1.year, user2.year, weight_params.year)
-    score += get_score(user1.courses, user2.courses, weight_params.courses)
-    score += get_score(user1.tags, user2.tags, weight_params.tags)
+    score += get_score(user1.gender, user2.gender, config.weight_params.gender)
+    score += get_score(user1.faculty, user2.faculty, config.weight_params.faculty)
+    score += get_score(user1.program, user2.program, config.weight_params.program)
+    score += get_score(user1.year, user2.year, config.weight_params.year)
+    score += get_score(user1.courses, user2.courses, config.weight_params.courses)
+    score += get_score(user1.tags, user2.tags, config.weight_params.tags)
     
     return score
 

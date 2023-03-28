@@ -30,5 +30,5 @@ def get_omega_config():
     Load omega_config that contain score weighting for recommendation system
     """
     omega_config = get_file_path("matching_weights.yml")
-    omega_config = omegaconf.DictConfig(omega_config)
+    omega_config = omegaconf.OmegaConf.load(omega_config)
     return omega_config
