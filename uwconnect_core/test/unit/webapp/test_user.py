@@ -7,6 +7,10 @@ from uwconnect_core.test.unit.webapp import client
 # https://flask.palletsprojects.com/en/2.2.x/testing/
 
 from uwconnect_core.main.model.user import UserCredential
+from uwconnect_core.main.service.load_dummy_db import *
+from uwconnect_core.main.service.dummy_factory import *
+from uwconnect_core.main.service.recommendation_system import *
+from uwconnect_core.main.service.utils import *
 
 # Need not to run `server.py`
 # Directly run `python -m pytest`
@@ -131,3 +135,4 @@ def test_user_validate(client):
     if query:
         query.delete()
     assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0
+
