@@ -1,7 +1,7 @@
 from flask import Blueprint, make_response, redirect, request, jsonify, session
 from apifairy import response, body, other_responses, arguments
 from mongoengine import ValidationError
-from werkzeug.exceptions import BadRequest, NotFound, Forbidden
+from werkzeug.exceptions import BadRequest, NotFound, Forbidden, Unauthorized
 
 from uwconnect_core.main.model.user import User, UserCredential
 from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, pop_session, set_session
@@ -65,7 +65,7 @@ def validate(request):
     process to check if username+password combination is valid
     if checkUserOnly flag is off: return { "message": "success" } if its valid account
     if checkUserOnly flag is on: return { "message": "exist" } if its valid account
-    return { "message": "fail" } if its invalid account
+    return { "message": "fail" } if its invalid account, return 403 Forbidden if the user's profile is incomplete
     """
 
     data = request
@@ -79,13 +79,17 @@ def validate(request):
         user_query = UserCredential.objects.filter(email=user_email).first()
     else:
         user_query = UserCredential.objects.filter(email=user_email,password=user_password).first()
+        profile_query = User.objects.filter(email=user_email)
     
     if(user_query):
         if flag_checkUserOnly:
             return { "message": "exist" } 
-        else:
+        elif profile_query:
             set_session("email", user_email)
             return { "message": "success" }
+        else:
+            # user registered but profile incomplete
+            raise Forbidden("incomplete profile")
     else:
         return { "message": "fail" }
 
@@ -164,7 +168,7 @@ def get_logged_in_user():
         }
     except:
         # return redirect(app.config['FRONTEND_DOMAIN'] + '/')
-        raise Forbidden("client not logged in")
+        raise Unauthorized("client not logged in")
     
 
 @user.route("/logout", methods=["POST"])
@@ -179,7 +183,7 @@ def log_out(request):
     print(email, user)
 
     if email != user:
-        raise Forbidden("client not logged in")
+        raise Unauthorized("client not logged in")
     
     pop_session("email")
     return { "message": "success" }

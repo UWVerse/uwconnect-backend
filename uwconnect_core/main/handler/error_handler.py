@@ -1,9 +1,11 @@
-from werkzeug.exceptions import BadRequest, InternalServerError, NotFound, Forbidden
+from werkzeug.exceptions import BadRequest, InternalServerError, NotFound, Forbidden, Unauthorized
 
 
 def handle_bad_request(e: BadRequest):
     return { "message": e.description }, 400
 
+def handle_unauthorized_error(e: Unauthorized):
+    return { "message": e.description }, 403
 
 def handle_forbidden_error(e: Forbidden):
     return { "message": e.description }, 403
