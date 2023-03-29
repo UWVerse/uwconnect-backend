@@ -28,7 +28,7 @@ def create_app(testing=False):
         from uwconnect_core.main.api.user.routes import user
         from uwconnect_core.main.api.enrollment.routes import enrollment
         from uwconnect_core.main.api.hobbies.routes import hobbies
-        from uwconnect_core.main.api.webhook.cometchat import cometchat_webhook
+        from uwconnect_core.main.api.cometchat_webhook.routes import cometchat_webhook
 
         app.register_blueprint(user, url_prefix='/user')
         app.register_blueprint(enrollment, url_prefix="/enrollment")
