@@ -6,7 +6,7 @@ from uwconnect_core.main.service.cometchat_api import reset_conversation
 
 
 def create_friend_request_expiry_job(sender_email, receiver_email, COMETCHAT_APP_ID, COMETCHAT_API_KEY):
-    sleep(10)
+    sleep(24*60*60)
 
     sender = User.objects().get(email=sender_email)
     receiver = User.objects().get(email=receiver_email)
