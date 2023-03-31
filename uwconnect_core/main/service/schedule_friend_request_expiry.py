@@ -1,27 +1,25 @@
-import schedule
-import time
+from time import sleep
+
 from uwconnect_core.main.model.friend import FriendRequest
 from uwconnect_core.main.model.user import User
+from uwconnect_core.main.service.cometchat_api import reset_conversation
 
 
-def create_friend_request_expiry_job(sender_email, receiver_email):
-    def job(sender_email, receiver_email):
-        sender = User.objects().get(email=sender_email)
-        receiver = User.objects().get(email=receiver_email)
-        friend_request = FriendRequest.objects().get(requester=receiver, requestee=sender)
+def create_friend_request_expiry_job(sender_email, receiver_email, COMETCHAT_APP_ID, COMETCHAT_API_KEY):
+    sleep(10)
 
+    sender = User.objects().get(email=sender_email)
+    receiver = User.objects().get(email=receiver_email)
+    try:
+        friend_request = FriendRequest.objects().get(requester=sender, requestee=receiver)
         if friend_request.approved:
             return
         friend_request.modify(expired=True)
 
+        reset_conversation(sender_email.split('@')[0], receiver_email.split('@')[0], COMETCHAT_APP_ID, COMETCHAT_API_KEY)
+        
+    except FriendRequest.DoesNotExist:
+        pass
 
-    schedule.run_in(24*60*60, job, sender_email, receiver_email)
 
 
-
-
-schedule.run_in(10, job) # Job will run once after 10 seconds
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)

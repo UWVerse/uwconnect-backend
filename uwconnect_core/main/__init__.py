@@ -33,7 +33,7 @@ def create_app(testing=False):
         app.register_blueprint(user, url_prefix='/user')
         app.register_blueprint(enrollment, url_prefix="/enrollment")
         app.register_blueprint(hobbies, url_prefix="/hobbies")
-        app.register_blueprint(cometchat_webhook, url_prefix="/webhook/cometchat")
+        app.register_blueprint(cometchat_webhook, url_prefix="/cometchat_webhook")
 
         import uwconnect_core.main.handler  # Do NOT remove
 
