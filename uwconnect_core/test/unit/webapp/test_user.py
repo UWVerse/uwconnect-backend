@@ -167,30 +167,5 @@ def test_check_friends(logged_in_client, test_cometchat_user, mock_friends):
     response = client.get(f'/user/check_friends?me=i_dont_exist&other={friend_b.email}')
     assert response.status_code != 200
 
-def test_get_friends(logged_in_client, test_cometchat_user, mock_friends):
-    """
-    Test the get friends
-    return HTTP: 200 “success” if account created successfully
-    return HTTP: 200 “exist“ if account is exist
-    return server error if there is other error occurred
-    """
-    # Test if the users are not friends
-    client = logged_in_client
-    non_friend = test_cometchat_user
-    friend_a, friend_b = mock_friends
-    response = client.get(f'/user/friends?email={non_friend.email}')
     
-    assert response.status_code == 200
-    message = response.data.decode()
-    assert "[]" in message
-    
-    # Test if the users are friends
-    response = client.get(f'/user/friends?email={friend_a.email}')
-    assert response.status_code == 200
-    message = response.data.decode()
-    assert friend_b.get_uid() in message
-    
-    # Test if the user does not exist
-    response = client.get(f'/user/friends?email=i_dont_exist')
-    assert response.status_code != 200
     

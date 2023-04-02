@@ -240,21 +240,6 @@ def recommendation(request):
     recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
     return document_to_dict_batch(recommendations)
 
-cometchat_uid_list_schema = CometchatUidListSchema()
-
-@user.get("/friends")
-@arguments(user_email_schema)
-@response(cometchat_uid_list_schema)
-def get_friends(request):
-    email = request.get("email")
-    user : User = User.objects().get(email=email)
-    cc_friends = cometchat_api.get_friends(user.get_uid())
-    # Append '@uwaterloo.ca' to uids
-    uids = [cf['uid'] for cf in cc_friends]
-    cometchat_uid_list_schema = CometchatUidListSchema()
-    cometchat_uid_list_schema.emails = uids
-    return cometchat_uid_list_schema
-
 user_friend_email_schema = UserFriendEmailSchema()
 
 @user.get("/check_friends")
