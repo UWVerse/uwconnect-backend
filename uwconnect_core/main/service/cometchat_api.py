@@ -1,7 +1,7 @@
 import requests
 from flask import current_app
 
-def get_friends(uid, friend_uid):
+def get_friends(uid, friend_uid=None):
     url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users/{uid}/friends"
     headers = {
         "accept": "application/json",
@@ -10,7 +10,8 @@ def get_friends(uid, friend_uid):
     }
     if friend_uid:
         url += f"?searchKey={friend_uid}"
-    return requests.get(url, headers=headers).json().get("data")
+    uids = requests.get(url, headers=headers).json().get("data")
+    return uids
 
 def add_friends(uid, friend_uid):
     url = f"https://{current_app.config['COMETCHAT_APP_ID']}.api-us.cometchat.io/v3/users/{uid}/friends"

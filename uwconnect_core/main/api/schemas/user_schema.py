@@ -50,4 +50,8 @@ class UserListSchema(flaskMarshal.Schema):
     class Meta:
         ordered = True
     users = flaskMarshal.List(flaskMarshal.Nested(UserSchema))
-    total = flaskMarshal.Integer()
+
+class CometchatUidListSchema(flaskMarshal.Schema):
+    class Meta:
+        ordered = True
+    emails = flaskMarshal.List(flaskMarshal.String())
