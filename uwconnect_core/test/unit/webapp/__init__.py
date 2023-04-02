@@ -1,4 +1,6 @@
 from uwconnect_core.main import create_app
+from uwconnect_core.main.service.load_dummy_db import *
+import uwconnect_core.main.service.cometchat_api as cometchat_api
 import pytest
 
 """Initialize the testing environment
@@ -19,5 +21,47 @@ def client():
     app = create_app(testing=True)
     #app.config['TESTING'] = True
     client = app.test_client()
-
+    with app.app_context():
+        yield client
+    
+@pytest.fixture
+def logged_in_client(client):
+    with client.session_transaction() as session:
+        session["email"] = 1
     yield client
+    
+@pytest.fixture
+def test_user():
+    user = load_test_user()
+    yield user
+    delete_user_by_doc(user)
+
+@pytest.fixture
+def test_cometchat_user():
+    user = load_test_user()
+    cometchat_api.add_user(user.get_uid(), user.first_name)
+    yield user
+    delete_user_by_doc(user)
+    
+@pytest.fixture
+def test_users(request):
+    users = []
+    for user in request.param:
+        users.append(load_test_user(**user))
+    yield users
+    for user in users:
+        delete_user_by_doc(user)
+
+@pytest.fixture
+def mock_friends():
+    friend_a : User = load_test_user('test_friend_a')
+    friend_b : User = load_test_user('test_friend_b')
+    cometchat_api.add_user(friend_a.get_uid(), friend_a.first_name)
+    cometchat_api.add_user(friend_b.get_uid(), friend_b.first_name)
+    cometchat_api.add_friends(friend_a.get_uid(), friend_b.get_uid())
+    yield friend_a, friend_b
+    cometchat_api.remove_friends(friend_a.get_uid(), friend_b.get_uid())
+    cometchat_api.remove_user(friend_a.get_uid())
+    cometchat_api.remove_user(friend_b.get_uid())
+    delete_user_by_doc(friend_a)
+    delete_user_by_doc(friend_b)

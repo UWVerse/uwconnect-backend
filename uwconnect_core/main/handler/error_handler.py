@@ -16,4 +16,4 @@ def handle_not_found_error(e: NotFound):
 
 
 def handle_internal_server_error(e: InternalServerError):
-    return { "message": "unexpected error" }, 500
+    return { "message": f"unexpected error" }, 500
