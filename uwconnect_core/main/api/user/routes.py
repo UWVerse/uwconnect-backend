@@ -10,6 +10,7 @@ from uwconnect_core.main.service.recommendation_system import *
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
 from uwconnect_core.main.api.schemas.user_schema import *
+import uwconnect_core.main.service.cometchat_api as cometchat_api
 
 user = Blueprint('user', __name__)
 message_schema = MessageSchema()
@@ -206,6 +207,7 @@ def test_middlewire():
 @user.route("/filter", methods=['POST'])
 @body(user_filter_schema)
 @response(user_list_schema)
+@check_login
 def get_filtered_users(request):
     query = None
     if request.gender:
@@ -238,3 +240,16 @@ def recommendation(request):
     recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
     return document_to_dict_batch(recommendations)
 
+user_friend_email_schema = UserFriendEmailSchema()
+
+@user.get("/check_friends")
+@arguments(user_friend_email_schema)
+@response(message_schema)
+def check_friend(request):
+    me_email = request.get("me")
+    other_email = request.get("other")
+    me = User.objects().get(email=me_email)
+    other = User.objects().get(email=other_email)
+    if cometchat_api.get_friends(me.get_uid(), other.get_uid()):
+        return {"message": "true"}
+    return {"message": "false"}

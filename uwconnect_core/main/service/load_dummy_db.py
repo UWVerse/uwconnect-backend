@@ -61,7 +61,6 @@ def load_test_user(username="test", password="12345678", get_cred=False, **kwarg
     Load test user.
     **kwarg is for arguments of RandomUserFactory, i.e. tags, courses
     """
-    username = "test"
     #user = RandomUserFactory(username=username,
     #                        tags=['Tennis'],
     #                        courses=['ECE650', 'ECE651'],
