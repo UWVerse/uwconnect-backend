@@ -31,12 +31,36 @@ def delete_all_user():
     User.drop_collection()
     UserCredential.drop_collection()
 
+def delete_user_by_doc(user: User):
+    """
+    Delete entry of a specfic user by document
+    """
+    delete_user_by_email(user.email)
+
+def delete_user_by_email(email: str):
+    """
+    Delete entry of a specfic user by email
+    """
+    email_to_delete = email
+    # Query for the UserCredential object with the specified email
+    user_credential = UserCredential.objects(email=email_to_delete).first()
+    user = User.objects(email=email_to_delete).first()
+
+    # Check if a UserCredential object with the specified email exists
+    if user_credential:
+        # If a UserCredential object with the specified email exists, delete it
+        user_credential.delete()
+
+    # Check if a User object with the specified email exists
+    if user:
+        # If a User object with the specified email exists, delete it
+        user.delete()
+
 def load_test_user(username="test", password="12345678", get_cred=False, **kwarg):
     """
     Load test user.
     **kwarg is for arguments of RandomUserFactory, i.e. tags, courses
     """
-    username = "test"
     #user = RandomUserFactory(username=username,
     #                        tags=['Tennis'],
     #                        courses=['ECE650', 'ECE651'],

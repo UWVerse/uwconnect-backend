@@ -2,11 +2,17 @@
 To use the client fixture we created in webapp __init__.py, 
 we need to import it. PyCharm will claim that the import is unused, but pytest actually needs it. 
 """
-from uwconnect_core.test.unit.webapp import client
+from uwconnect_core.test.unit.webapp import *
 # https://codethechange.stanford.edu/guides/guide_flask_unit_testing.html
 # https://flask.palletsprojects.com/en/2.2.x/testing/
 
 from uwconnect_core.main.model.user import UserCredential
+from uwconnect_core.main.service.load_dummy_db import *
+from uwconnect_core.main.service.dummy_factory import *
+from uwconnect_core.main.service.recommendation_system import *
+from uwconnect_core.main.service.utils import *
+import uwconnect_core.main.service.cometchat_api as cometchat_api
+import pytest
 
 # Need not to run `server.py`
 # Directly run `python -m pytest`
@@ -27,7 +33,8 @@ def test_status_code(client):
 # How can I fake request.POST and GET params for unit testing in Flask?
 # https://stackoverflow.com/questions/7428124/how-can-i-fake-request-post-and-get-params-for-unit-testing-in-flask
 
-def test_user_register(client):
+
+def test_user_register(logged_in_client):
     """
     Test the register
     return HTTP: 200 “success” if account created successfully
@@ -131,3 +138,34 @@ def test_user_validate(client):
     if query:
         query.delete()
     assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0
+
+
+def test_check_friends(logged_in_client, test_cometchat_user, mock_friends):
+    """
+    Test the check friends
+    return HTTP: 200 “success” if account created successfully
+    return HTTP: 200 “exist“ if account is exist
+    return server error if there is other error occurred
+    """
+    # Test if the users are not friends
+    client = logged_in_client
+    non_friend = test_cometchat_user
+    friend_a, friend_b = mock_friends
+    response = client.get(f'/user/check_friends?me={non_friend.email}&other={friend_a.email}')
+    
+    assert response.status_code == 200
+    message = response.data.decode()
+    assert "false" in message
+    
+    # Test if the users are friends
+    response = client.get(f'/user/check_friends?me={friend_a.email}&other={friend_b.email}')
+    assert response.status_code == 200
+    message = response.data.decode()
+    assert "true" in message
+    
+    # Test if the user does not exist
+    response = client.get(f'/user/check_friends?me=i_dont_exist&other={friend_b.email}')
+    assert response.status_code != 200
+
+    
+    

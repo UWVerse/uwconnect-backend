@@ -36,6 +36,10 @@ class SessionSchema(flaskMarshal.Schema):
 class UserEmailSchema(flaskMarshal.Schema):
     email = flaskMarshal.String()
     
+class UserFriendEmailSchema(flaskMarshal.Schema):
+    me = flaskMarshal.String()
+    other = flaskMarshal.String()
+    
 class UserFilterSchema(ma.ModelSchema):
     class Meta:
         model = User
