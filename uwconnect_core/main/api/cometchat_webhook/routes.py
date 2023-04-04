@@ -1,7 +1,9 @@
-from flask import Blueprint, request
+import threading
+from flask import Blueprint, current_app, request
 import uwconnect_core.main.service.cometchat_api as comet_api
 from uwconnect_core.main.model.friend import FriendRequest
 from uwconnect_core.main.model.user import User
+from uwconnect_core.main.service.schedule_friend_request_expiry import create_friend_request_expiry_job
 
 cometchat_webhook = Blueprint('cometchat_webhook', __name__)
 
@@ -27,19 +29,33 @@ def before_message():
     sender = User.objects().get(email=f"{sender_uid}@uwaterloo.ca")
     receiver = User.objects().get(email=f"{receiver_uid}@uwaterloo.ca")
     # If it is the friend requestee replying back, then permit and add them as friends
+    # If the request is expired, drop the message
     try:
         friend_request = FriendRequest.objects().get(requester=receiver, requestee=sender)
-        comet_api.add_friends(sender_uid, receiver_uid)
-        # remove the friend request
-        friend_request.delete()
-        return {}
+
+        if not friend_request.approved and not friend_request.expired:
+            comet_api.add_friends(sender_uid, receiver_uid)
+            friend_request.modify(approved=True)
+
+        if not friend_request.expired:
+            return {}
     except FriendRequest.DoesNotExist:
         pass
     
     # If it is the friend requester sending further messages, then reject
     try:
         friend_request = FriendRequest.objects().get(requester=sender, requestee=receiver)
-        return {"action": "do_not_propagate"}
+        if friend_request.expired:
+            # last request expired, reactivate it
+            friend_request.modify(expired=False)
+
+            thread = threading.Thread(target=create_friend_request_expiry_job, args=(f"{sender_uid}@uwaterloo.ca", f"{receiver_uid}@uwaterloo.ca", current_app.config['COMETCHAT_APP_ID'], current_app.config["COMETCHAT_API_KEY"]))
+            thread.start()
+
+            return {}
+        elif not friend_request.approved:
+            return {"action": "do_not_propagate"}
+        return {}  # friend request is already approved
     except FriendRequest.DoesNotExist:
         pass
     
@@ -47,4 +63,8 @@ def before_message():
     friend_request = FriendRequest(requester=sender, requestee=receiver)
     friend_request.validate()
     friend_request.save()
+
+    thread = threading.Thread(target=create_friend_request_expiry_job, args=(f"{sender_uid}@uwaterloo.ca", f"{receiver_uid}@uwaterloo.ca", current_app.config['COMETCHAT_APP_ID'], current_app.config["COMETCHAT_API_KEY"]))
+    thread.start()
+
     return {}
