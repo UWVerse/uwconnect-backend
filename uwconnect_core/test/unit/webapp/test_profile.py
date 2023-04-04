@@ -37,11 +37,3 @@ def test_get_profile(logged_in_client, test_user):
     code = response.status_code
     assert code == 404
 
-
-def test_post_profile(logged_in_client, test_user):
-    """
-    POST: update user detail
-    @body(user_schema)
-    @response(message_schema)
-    """
-    pass
