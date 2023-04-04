@@ -26,18 +26,27 @@ def client():
     
 @pytest.fixture
 def logged_in_client(client):
+    """
+    client with session.
+    """
     with client.session_transaction() as session:
         session["email"] = 1
     yield client
     
 @pytest.fixture
 def test_user():
+    """
+    test user (will be automatically deleted after test)
+    """
     user = load_test_user()
     yield user
     delete_user_by_doc(user)
 
 @pytest.fixture
 def test_cometchat_user():
+    """
+    test user (will be automatically deleted after test)
+    """
     user = load_test_user()
     cometchat_api.add_user(user.get_uid(), user.first_name)
     yield user
@@ -45,6 +54,9 @@ def test_cometchat_user():
     
 @pytest.fixture
 def test_users(request):
+    """
+    test user (will be automatically deleted after test)
+    """
     users = []
     for user in request.param:
         users.append(load_test_user(**user))
@@ -54,6 +66,9 @@ def test_users(request):
 
 @pytest.fixture
 def mock_friends():
+    """
+    test user (will be automatically deleted after test)
+    """
     friend_a : User = load_test_user('test_friend_a')
     friend_b : User = load_test_user('test_friend_b')
     cometchat_api.add_user(friend_a.get_uid(), friend_a.first_name)
