@@ -27,8 +27,7 @@ def test_random_user_factory(client):
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(logging.DEBUG)
 """
-
-def test_recommendation(client):
+def test_get_records(client):
     delete_all_user()
 
     user = load_test_user(tags=['Tennis'],
@@ -41,6 +40,16 @@ def test_recommendation(client):
     #print("len(records): ", len(records))
     assert len(records) > 0
 
+def test_get_recommendation(client):
+    delete_all_user()
+
+    user = load_test_user(tags=['Tennis'],
+                            courses=['ECE650', 'ECE651'],
+                            faculty = 'Engineering',
+                            profile_visible=True)
+    
+    load_dummy_users(50)
+    records = search_recommendation_db(user)
     recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
     #print("len(recommendations): ", len(recommendations))
     assert len(recommendations) > 0

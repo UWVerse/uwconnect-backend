@@ -16,7 +16,7 @@ from uwconnect_core.main.service.utils import *
 # Directly run `python -m pytest`
 # Directly run `python -m pytest -v -s --disable-warnings`
 
-def test_get_profile(logged_in_client, test_user):
+def test_get_profile_success(logged_in_client, test_user):
     """
     GET user profile
         Incoming request message:
@@ -31,6 +31,17 @@ def test_get_profile(logged_in_client, test_user):
     response = logged_in_client.get(f'/user/profile?email={test_user.email}')
     code = response.status_code
     assert code == 200
+
+def test_get_profile_fail(logged_in_client, test_user):
+    """
+    GET user profile
+        Incoming request message:
+            query parameter: ?email=<email address>
+
+        Return message:
+            if email does not exist: { "message": "user does not exist" }
+            otherwise: { "message": "success", "body": <user object> }
+    """
 
     # if email does not exist
     response = logged_in_client.get('/user/profile?email=xxx@uwaterloo.ca')
