@@ -29,6 +29,8 @@ def logged_in_client(client):
     """
     client with session.
     """
+    # How can I fake request.POST and GET params for unit testing in Flask?
+    # https://stackoverflow.com/questions/7428124/how-can-i-fake-request-post-and-get-params-for-unit-testing-in-flask
     with client.session_transaction() as session:
         session["email"] = 1
     yield client
@@ -40,6 +42,15 @@ def test_user():
     """
     user = load_test_user()
     yield user
+    delete_user_by_doc(user)
+
+@pytest.fixture
+def test_user_with_cred():
+    """
+    test user (will be automatically deleted after test)
+    """
+    user, user_cred = load_test_user(get_cred=True)
+    yield user, user_cred
     delete_user_by_doc(user)
 
 @pytest.fixture

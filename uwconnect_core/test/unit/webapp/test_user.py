@@ -18,23 +18,20 @@ import pytest
 # Directly run `python -m pytest`
 # Directly run `python -m pytest -v -s --disable-warnings`
 
-def test_status_code(client):
+def test_register_status_code(client):
     """
-    check if status code of /user/... are not allowed (Code 405)
+    check if status code of /user/register is not allowed (Code 405)
     """
-    api_status_405 =  [ 
-                client.get("/user/register").status_code, 
-                client.get("/user/validate").status_code, 
-                ]
-    # Check status for 405 not allowed
-    for code in api_status_405:
-        assert code == 405
+    assert client.get("/user/register").status_code == 405
 
-# How can I fake request.POST and GET params for unit testing in Flask?
-# https://stackoverflow.com/questions/7428124/how-can-i-fake-request-post-and-get-params-for-unit-testing-in-flask
+def test_validate_status_code(client):
+    """
+    check if status code of /user/validate is not allowed (Code 405)
+    """
+    assert client.get("/user/validate").status_code == 405
 
 
-def test_user_register(logged_in_client):
+def test_user_register(client):
     """
     Test the register
     return HTTP: 200 “success” if account created successfully
@@ -49,11 +46,6 @@ def test_user_register(logged_in_client):
     user_info_wrong_pw = {
                     "email": "xxx@uwaterloo.ca",
                     "password": "wrong",
-    }
-
-    bad_info = {
-                    "email": "xxx@uoft.ca",
-                    "password": "xxxx",
     }
 
     # Incase the data exists in the database
@@ -83,7 +75,23 @@ def test_user_register(logged_in_client):
         query.delete()
     assert UserCredential.objects(email=user_info['email'], password=user_info['password']).count() == 0
     
-def test_user_validate(client):
+def test_user_register_exist(client, test_user_with_cred):
+    """
+    Test the register
+    return HTTP: 200 “success” if account created successfully
+    return HTTP: 200 “exist“ if account is exist
+    return server error if there is other error occurred
+    """
+    user, user_cred = test_user_with_cred
+    user_info = {
+                "email": user_cred.email,
+                "password": user_cred.password,
+            }
+    response = client.post('/user/register', json=user_info)
+    message = response.data.decode()
+    assert "exist" in message
+    
+def test_user_validate(logged_in_client):
     """
     validation process to check if username+password combination is valid
     if checkUserOnly flag is off: return “success” if its valid account
@@ -91,7 +99,7 @@ def test_user_validate(client):
     return “fail“ if its invalid account
     """
 
-    
+    client = logged_in_client
     user_info = {
                     "email": "xxx@uwaterloo.ca",
                     "password": "xxxx",
@@ -106,7 +114,7 @@ def test_user_validate(client):
                     "checkUserOnly": False,
                 })
     message = response.data.decode()
-    assert "success" in message
+    assert "incomplete profile" in message
 
     # if checkUserOnly flag is on: return “existing” if its valid account
     response = client.post('/user/validate', json={
