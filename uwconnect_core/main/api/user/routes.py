@@ -5,7 +5,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Forbidden, Unauthorized
 from mongoengine import ValidationError, Q
 
 from uwconnect_core.main.model.user import User, UserCredential
-from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, get_session, pop_session, set_session
+from uwconnect_core.main.service.user_service import check_login, cometchat_create_user, delete_session, get_session, pop_session, set_session
 from uwconnect_core.main.service.recommendation_system import *
 from uwconnect_core.main.service.utils import *
 from uwconnect_core.main.api.schemas.shared_schema import MessageSchema
@@ -149,14 +149,12 @@ def updateProfile(request):
     # resp.set_cookie("username", request.username)
     set_session("email", request.email)
     set_session("username", request.username)
-    # print(session)
+
     if user_profile_query.count() == 0:
         # new user
         uid = request.email.split('@')[0]
         cometchat_create_user(uid, request.username)
 
-    print(document_to_dict(request)["date_joined"])
-    
 
     user_profile_query.modify(upsert=True, new=True, **document_to_dict(request))
     return { "message": "success" }
@@ -178,7 +176,6 @@ def get_logged_in_user():
 
 @user.route("/logout", methods=["POST"])
 @body(user_email_schema)
-@response(message_schema)
 @check_login
 def log_out(request):
     """remove the backend session for incoming client, email in request body must match the one in client's session"""
@@ -191,7 +188,15 @@ def log_out(request):
         raise Unauthorized("client not logged in")
     
     pop_session("email")
-    return { "message": "success" }
+    delete_session()
+
+    data = { "message": "success" }
+    json_data = json.dumps(data)
+    response = make_response(json_data)
+    response.delete_cookie("session")
+    response.headers['Content-Type'] = 'application/json'
+    
+    return response
 
 
 @user.route("/test_middlewire", methods=["GET"])

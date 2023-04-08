@@ -15,6 +15,9 @@ def get_session(key):
 def pop_session(key):
     session.pop(key, None)
 
+def delete_session():
+    session.clear()
+
 
 def check_login(func):
     def wrapper(*args, **kwargs):
