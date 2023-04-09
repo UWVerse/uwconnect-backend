@@ -39,6 +39,7 @@ def test_get_records(client):
     records = search_recommendation_db(user)
     #print("len(records): ", len(records))
     assert len(records) > 0
+    delete_all_user()
 
 def test_get_recommendation(client):
     delete_all_user()
@@ -53,7 +54,7 @@ def test_get_recommendation(client):
     recommendations = get_recommendation(user, records, list_length=10, score_threshold=10)
     #print("len(recommendations): ", len(recommendations))
     assert len(recommendations) > 0
-
+    delete_all_user()
     #print(document_to_dict(user))
     #print(document_to_dict(recommendations[0]))
 
