@@ -1,0 +1,7 @@
+from uwconnect_core.main.handler.error_handler import *
+from flask import current_app
+
+current_app.register_error_handler(BadRequest, handle_bad_request)
+current_app.register_error_handler(NotFound, handle_not_found_error)
+current_app.register_error_handler(Forbidden, handle_forbidden_error)
+current_app.register_error_handler(InternalServerError, handle_internal_server_error)

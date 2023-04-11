@@ -1,0 +1,20 @@
+[GLOBAL]
+MODE = TEST
+LOAD_ENROLLMENT_DB = False
+LOAD_DUMMY_DB = False
+
+[PROD]
+DB_URI = your_production_db_uri (can be the same as Atlas, or a local MongoDB database)
+UW_API_KEY = xxx
+COMETCHAT_API_KEY = xxx
+FRONTEND_DOMAIN = xxx
+SECRET_KEY = xxx
+SESSION_COOKIE_SECURE = True
+
+[TEST]
+DB_URI = your_testing_db_uri
+UW_API_KEY = xxx
+COMETCHAT_API_KEY = xxx
+FRONTEND_DOMAIN = http://localhost:3000
+SECRET_KEY = something
+SESSION_COOKIE_SECURE = True

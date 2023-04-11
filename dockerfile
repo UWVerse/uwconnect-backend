@@ -3,11 +3,14 @@ FROM python:3.10.9-buster
 
 WORKDIR /server
 
-COPY . /server/
+COPY . .
+COPY requirements.txt requirements.txt
+RUN python3 -m pip install -U pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN python -m pip install -U pip
-RUN pip install --no-cache-dir -r /server/requirements.txt
 
-EXPOSE 8080
+EXPOSE 5000
 
-CMD python /server/server.py
+ENV FLASK_APP=server.py
+ENTRYPOINT [ "flask"]
+CMD ["run", "-h", "0.0.0.0", "-p", "5000"]
